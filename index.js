@@ -154,22 +154,39 @@ async function run() {
     app.put("/jobs/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
-      const coffee = req.body;
+      const job = req.body;
       const update = {
         $set: {
-          name: coffee.name,
-          chef: coffee.chef,
-          supplier: coffee.supplier,
-          taste: coffee.taste,
-          category: coffee.category,
-          details: coffee.details,
-          photo: coffee.photo,
-          price: coffee.price,
+          title: job.title,
+          category: job.category,
+          description: job.description,
+          deadline: job.deadline,
+          budget: job.budget,
+          userEmail: job.userEmail,
+          userName: job.userName,
         },
       };
 
       const option = { upset: true };
       const result = await usercollection.updateOne(filter, update, option);
+      res.send(result);
+    });
+
+    // bits
+
+    const usercollection2 = database.collection("bits");
+
+    app.post("/bits", async (req, res) => {
+      console.log("data posted", req.body);
+      const newuser = req.body;
+      const result = await usercollection2.insertOne(newuser);
+      res.send(result);
+    });
+
+    app.get("/bits/jobs/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await usercollection.find(query).toArray();
       res.send(result);
     });
 
